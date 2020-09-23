@@ -1,0 +1,16 @@
+Index: src/view/EditEmployeeGUI.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/view/EditEmployeeGUI.java	(date 1600802992000)
++++ src/view/EditEmployeeGUI.java	(date 1600802992000)
+@@ -22,7 +22,7 @@
+             public void actionPerformed(ActionEvent actionEvent) {
+                 panelHandler.getNewEmployeeButton().setEnabled(true);
+                 panelHandler.updateGUI(editName.getText(),editAge.getText(),editSalary.getText(),editEmployment.getText(),editWork.getText());
+-                panelHandler.resetEdit();
++                //panelHandler.resetEdit();
+                 //panelHandler.setEdit(new EditEmployeeGUI(panelHandler));
+                 //panelHandler.getMainController().getMainFrame().getContentPane().removeAll();
+ 

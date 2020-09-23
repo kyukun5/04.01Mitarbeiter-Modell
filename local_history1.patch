@@ -1,0 +1,453 @@
+Index: src/view/MainFrame.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/view/MainFrame.java	(date 1600800718000)
++++ src/view/MainFrame.java	(date 1600800718000)
+@@ -1,7 +1,6 @@
+ package view;
+ 
+ import control.MainController;
+-import model.MainModel;
+ 
+ import javax.swing.*;
+ import java.awt.*;
+@@ -15,7 +14,6 @@
+ 
+     // Referenzen
+     private MainController mainController;
+-    private MainModel mainModel;
+     private PanelHandler panelHandler;
+ 
+ 
+@@ -29,13 +27,13 @@
+      */
+     public MainFrame(MainController mainController, String name, int x, int y, int width, int height) {
+         this.mainController = mainController;
+-        this.panelHandler=new PanelHandler(mainModel, mainController);
+-
++        mainController.setMainFrame(this);
++        this.panelHandler=new PanelHandler(mainController);
+         this.setLocation(x,y);
+         this.setSize(width,height);
+         this.setTitle(name);
+-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+-        this.setResizable(false);
++        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
++        this.setResizable(true);
+         this.setVisible(true);
+ 
+     }
+@@ -53,7 +51,11 @@
+         return panelHandler;
+     }
+ 
+-    public MainModel getMainModel() {
+-        return mainModel;
++    public void setPanelHandler(PanelHandler panelHandler) {
++        this.panelHandler = panelHandler;
++    }
++
++    public MainController getMainController() {
++        return mainController;
+     }
+ }
+Index: src/view/PanelHandler.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/view/PanelHandler.java	(date 1600802802000)
++++ src/view/PanelHandler.java	(date 1600802802000)
+@@ -23,42 +23,36 @@
+     private JLabel nameLabel;
+ 
+     private MainController mainController;
+-    public PanelHandler(MainModel mainModel, MainController mainController) {
++    public PanelHandler(MainController mainController) {
+         this.mainController=mainController;
+         edit=new EditEmployeeGUI(this);
+         newEmp=new NewEmployeeGUI(this);
+         createButtons();
+-        updateGUI(null,null,null,null,null);
++        mainController.updateGUI(null,null,null,null,null);
+     }
+     public void createButtons(){
+         editEmployeeButton.setText("Edit");
+         newEmployeeButton.setText("Create New Employee");
++        /*
+         newEmployeeButton.addActionListener(new ActionListener() {
+             @Override
+             public void actionPerformed(ActionEvent actionEvent) {
+-                //TODO aufrufen des NewEmployeeGUIs
+-                /*
+-                mainFrame.getMainModel().getFrames().add(new MainFrame(mainFrame.getMainModel(), mainController,"NewEmployee",1200,50,500,500));
+-                mainFrame.getMainModel().getFrames().get(1).switchToPanel(newEmp.getPanel());
+-                */
+                 editEmployeeButton.setEnabled(false);
+                 mainFrame=new MainFrame(mainController,"NewEmployee",1200,50,500,500);
+                 mainFrame.switchToPanel(newEmp.getPanel());
+-                //mainFrame.switchToPanel(newEmp.getPanel());
+             }
+         });
+         editEmployeeButton.addActionListener(new ActionListener() {
+             @Override
+             public void actionPerformed(ActionEvent actionEvent) {
+-                //TODO aufrufen des EditEmployeeGUIs
+                 newEmployeeButton.setEnabled(false);
+                 mainFrame = new MainFrame(mainController,"EditEmployee",1200,50,500,500);
+                 mainFrame.switchToPanel(edit.getPanel());
+-
+             }
+         });
+-
+-        //mainController.handlePanelHandler();
++        */
++        mainController.getMainFrame().setPanelHandler(this);
++        mainController.createButtons();
+     }
+     public void updateGUI(String name, String age, String salary, String employment, String work){
+         nameLabel.setText("Name: "+name);
+@@ -92,21 +86,24 @@
+     public JButton getNewEmployeeButton() {
+         return newEmployeeButton;
+     }
+-
+     public void resetEdit(){
+         edit=new EditEmployeeGUI(this);
+-        mainFrame.getContentPane().removeAll();
++        mainController.getMainFrame().getContentPane().repaint();
+     }
+     public void resetNew(){
+         newEmp=new NewEmployeeGUI(this);
+         mainFrame.getContentPane().removeAll();
+     }
+-
+     public EditEmployeeGUI getEdit() {
+         return edit;
+     }
+-
+     public NewEmployeeGUI getNewEmp() {
+         return newEmp;
+     }
++    public MainController getMainController() {
++        return mainController;
++    }
++    public void setEdit(EditEmployeeGUI edit) {
++        this.edit = edit;
++    }
+ }
+Index: src/view/NewEmployeeGUI.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/view/NewEmployeeGUI.java	(date 1600800394000)
++++ src/view/NewEmployeeGUI.java	(date 1600800394000)
+@@ -19,7 +19,7 @@
+     private JTextField newSalary;
+     private JTextField newEmployment;
+     private JTextField newName;
+-    //private MainModel mainModel;
++    private MainModel mainModel;
+ 
+     public NewEmployeeGUI(PanelHandler panelHandler) {
+         this.panelHandler=panelHandler;
+@@ -27,17 +27,22 @@
+         submitNewButton.addActionListener(new ActionListener() {
+             @Override
+             public void actionPerformed(ActionEvent actionEvent) {
+-                mainFrame=new MainFrame(mainController,"Employee02",200,50,500,500);
++                mainFrame=new MainFrame(panelHandler.getMainController(),"Employee02",200,50,500,500);
++
+                 mainFrame.switchToPanel(mainFrame.getPanelHandler().getPanel());
+                 mainFrame.getPanelHandler().getNameLabel().setText("Name: "+newName.getText());
+                 mainFrame.getPanelHandler().getAgeLabel().setText("Age: "+newAge.getText());
+                 mainFrame.getPanelHandler().getWorkLabel().setText("Work: "+newWork.getText());
+                 mainFrame.getPanelHandler().getSalaryLabel().setText("Salary: "+newSalary.getText());
+                 mainFrame.getPanelHandler().getEmploymentLabel().setText("Employment: "+newEmployment.getText());
+-                //TODO closeNewEmployee - create a new tab with the new Employee
+-                mainFrame=new MainFrame(mainController,"Employee02",200,50,500,500);
+-                panelHandler.resetNew();
++                mainFrame.switchToPanel(mainFrame.getPanelHandler().getPanel());
+                 panelHandler.getEditEmployeeButton().setEnabled(true);
++
++
++                panelHandler.getMainController().getModel().getFrames().add(mainFrame);
++                panelHandler.getMainController().getModel().getFrames().get(panelHandler.getMainController().getModel().getFrames().indexOf(mainFrame)).setTitle
++                        ("Employee "+((panelHandler.getMainController().getModel().getFrames().indexOf(mainFrame)))+": "+
++                                panelHandler.getMainController().getModel().getFrames().get(panelHandler.getMainController().getModel().getFrames().indexOf(mainFrame)).getPanelHandler().getNameLabel().getText().split("Name:")[1]);
+             }
+         });
+     }
+Index: src/view/EditEmployeeGUI.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/view/EditEmployeeGUI.java	(date 1600802992000)
++++ src/view/EditEmployeeGUI.java	(date 1600802992000)
+@@ -22,8 +22,14 @@
+             public void actionPerformed(ActionEvent actionEvent) {
+                 panelHandler.getNewEmployeeButton().setEnabled(true);
+                 panelHandler.updateGUI(editName.getText(),editAge.getText(),editSalary.getText(),editEmployment.getText(),editWork.getText());
+-                //TODO closeEdit
+-                panelHandler.resetEdit();
++                //panelHandler.resetEdit();
++                //panelHandler.setEdit(new EditEmployeeGUI(panelHandler));
++                //panelHandler.getMainController().getMainFrame().getContentPane().removeAll();
++
++                //TODO rename Employee-Frame-Title
++                //panelHandler.getMainController().getModel().getFrames().get(panelHandler.getMainController().getModel().getFrames().indexOf(mainFrame)).setTitle
++                        //("Employee "+((panelHandler.getMainController().getModel().getFrames().indexOf(mainFrame)))+": "+
++                                //panelHandler.getMainController().getModel().getFrames().get(panelHandler.getMainController().getModel().getFrames().indexOf(mainFrame)).getPanelHandler().getNameLabel().getText().split("Name:")[1]);
+             }
+         });
+     }
+@@ -31,7 +37,6 @@
+     public JPanel getPanel() {
+         return panel;
+     }
+-
+     public JButton getSubmitEditButton() {
+         return submitEditButton;
+     }
+Index: src/model/Work.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/model/Work.java	(date 1600251636000)
++++ src/model/Work.java	(date 1600251636000)
+@@ -1,11 +1,51 @@
+ package model;
+ 
+ public class Work {
+-    private String time;
+-    private String infos;
+-    private int difficulty;
++    private int time;   //Duration of Work in Workhours
++    private String infos;   //Details to task
++    private int difficulty; //Difficulty on scale 1-10
+     //TODO Klasse Work
+-    public Work(){
++    public Work(int time, String infos){
++        this.time=time;
++        this.infos=infos;
++        this.difficulty=difficulty;
++    }
++    public String toString(){
++        String h="";
++        h="Does "+ infos+"currently;\nThis takes "+time+"time, because its";
++        if(difficulty<=3){
++            h=h+"very easy.";
++        }
++        if(difficulty<=6 && difficulty>3){
++            h=h+"on average difficulty.";
++        }
++        if(difficulty>6){
++            h=h+"very hard.";
++        }
++        return h;
++    }
++
++    public int getTime() {
++        return time;
++    }
+ 
++    public void setTime(int time) {
++        this.time = time;
++    }
++
++    public String getInfos() {
++        return infos;
++    }
++
++    public void setInfos(String infos) {
++        this.infos = infos;
++    }
++
++    public int getDifficulty() {
++        return difficulty;
++    }
++
++    public void setDifficulty(int difficulty) {
++        this.difficulty = difficulty;
+     }
+ }
+Index: src/model/Employee.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/model/Employee.java	(date 1600251636000)
++++ src/model/Employee.java	(date 1600251636000)
+@@ -7,8 +7,12 @@
+     private double employmentTime;
+     private String currentWork;
+ 
+-    public Employee(){
+-
++    public Employee(String name, int age, double salary, double employmentTime, String currentWork){
++        this.name=name;
++        this.age=age;
++        this.salary=salary;
++        this.employmentTime=employmentTime;
++        this.currentWork=currentWork;
+     }
+     public String getName() {
+         return name;
+@@ -40,4 +44,5 @@
+     public void setCurrentWork(String currentWork) {
+         this.currentWork = currentWork;
+     }
++
+ }
+Index: src/model/MainModel.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/model/MainModel.java	(date 1600676146000)
++++ src/model/MainModel.java	(date 1600676146000)
+@@ -1,5 +1,6 @@
+ package model;
+ 
++import control.MainController;
+ import view.MainFrame;
+ 
+ import java.util.ArrayList;
+@@ -7,26 +8,32 @@
+ public class MainModel {
+     private ArrayList<Employee> employees;
+     private ArrayList<MainFrame> frames;
++    private ArrayList<Work> tasks;
++    private MainController mainController;
+     //TODO alles in MainModel abspeichern
+     public MainModel(){
+         frames=new ArrayList<MainFrame>();
+         employees=new ArrayList<Employee>();
++        tasks=new ArrayList<Work>();
+     }
+ 
+ 
+     public ArrayList<Employee> getEmployees() {
+         return employees;
+     }
+-
+     public void setEmployees(ArrayList<Employee> employees) {
+         this.employees = employees;
+     }
+-
+     public ArrayList<MainFrame> getFrames() {
+         return frames;
+     }
+-
+     public void setFrames(ArrayList<MainFrame> frames) {
+         this.frames = frames;
+     }
++    public ArrayList<Work> getTasks() {
++        return tasks;
++    }
++    public void setTasks(ArrayList<Work> tasks) {
++        this.tasks = tasks;
++    }
+ }
+Index: src/control/MainController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/control/MainController.java	(date 1600679036000)
++++ src/control/MainController.java	(date 1600679036000)
+@@ -1,11 +1,20 @@
+ package control;
+ 
++import model.MainModel;
+ import view.MainFrame;
+ 
++import java.awt.event.ActionEvent;
++import java.awt.event.ActionListener;
++
+ public class MainController{
+ 
++    private MainModel model;
+     private MainFrame mainFrame;
+     public MainController(){
++        this.model=new MainModel();
++        this.mainFrame=new MainFrame(this, "Employee 0:",50,50,500,500);
++        model.getFrames().add(mainFrame);
++        this.getModel().getFrames().get(0).switchToPanel(this.getModel().getFrames().get(0).getPanelHandler().getPanel());
+     }
+ 
+     public MainFrame getMainFrame() {
+@@ -14,5 +23,40 @@
+     public void setMainFrame(MainFrame mainFrame) {
+         this.mainFrame = mainFrame;
+     }
++    public MainModel getModel() {
++        return model;
++    }
++    public void setModel(MainModel model) {
++        this.model = model;
++    }
++    public void createButtons(){
++        mainFrame.getPanelHandler().getNewEmployeeButton().addActionListener(new ActionListener() {
++            @Override
++            public void actionPerformed(ActionEvent actionEvent) {
++                mainFrame.getPanelHandler().getEditEmployeeButton().setEnabled(false);
++                mainFrame=new MainFrame(getMainController(),"NewEmployee",1200,50,500,500);
++                mainFrame.switchToPanel(mainFrame.getPanelHandler().getNewEmp().getPanel());
++            }
++        });
++        mainFrame.getPanelHandler().getEditEmployeeButton().addActionListener(new ActionListener() {
++            @Override
++            public void actionPerformed(ActionEvent actionEvent) {
++                mainFrame.getPanelHandler().getNewEmployeeButton().setEnabled(false);
++                mainFrame = new MainFrame(getMainController(),"EditEmployee",1200,50,500,500);
++                mainFrame.switchToPanel(mainFrame.getPanelHandler().getEdit().getPanel());
++            }
++        });
++    }
++    public void updateGUI(String name, String age, String salary, String employment, String work){
++        mainFrame.getPanelHandler().getNameLabel().setText("Name: "+name);
++        mainFrame.getPanelHandler().getAgeLabel().setText("Age: "+age);
++        mainFrame.getPanelHandler().getSalaryLabel().setText("Salary: "+salary);
++        mainFrame.getPanelHandler().getEmploymentLabel().setText("Time Employed: "+employment);
++        mainFrame.getPanelHandler().getWorkLabel().setText("Currently Working on: "+work);
++    }
++
++    public MainController getMainController(){
++        return this;
++    }
+ }
+ 
+Index: src/MainProgram.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/MainProgram.java	(date 1600678748000)
++++ src/MainProgram.java	(date 1600678748000)
+@@ -6,7 +6,7 @@
+ import java.awt.*;
+ 
+ public class MainProgram {
+-    private static MainFrame panelHandle;
++    private static MainController mainController;
+     public static void main (String[] args){
+         EventQueue.invokeLater(
+                 new Runnable() {
+@@ -19,9 +19,8 @@
+ 
+     private static void setup(){
+         MainController mainController = new MainController();
+-        MainModel mainModel=new MainModel();
+-        mainModel.getFrames().add(new MainFrame(mainController, "Employee01",50,50,1200,900));
+-        mainModel.getFrames().get(0).switchToPanel(mainModel.getFrames().get(0).getPanelHandler().getPanel());
++        //mainController.getModel().getFrames().add(new MainFrame(mainController, "Employee 0:",50,50,500,500));
++        //mainController.getModel().getFrames().get(0).switchToPanel(mainController.getModel().getFrames().get(0).getPanelHandler().getPanel());
+     }
+ 
+ }

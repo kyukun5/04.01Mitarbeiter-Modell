@@ -1,6 +1,7 @@
 package view;
 
 import control.MainController;
+import model.MainModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,6 +15,7 @@ public class MainFrame extends JFrame {
 
     // Referenzen
     private MainController mainController;
+    private MainModel mainModel;
     private PanelHandler panelHandler;
 
 
@@ -27,16 +29,17 @@ public class MainFrame extends JFrame {
      */
     public MainFrame(MainController mainController, String name, int x, int y, int width, int height) {
         this.mainController = mainController;
-        this.panelHandler=new PanelHandler(mainController);
-        mainController.setMainFrame(this);
+        //this.mainModel=mainModel;
+        this.panelHandler=new PanelHandler(mainModel, mainController);
 
         this.setLocation(x,y);
         this.setSize(width,height);
         this.setTitle(name);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setResizable(true);
+        this.setResizable(false);
         this.setVisible(true);
 
+        //this.switchToPanel(panelHandler.getPanel());
     }
     /**
      * Mithilfe dieser Methode wird das übergebene JPanel-Objekt im Fenster angezeigt. Hierzu wird das aktuell vorhandene JPanel-Objekt zunächst entfernt.
@@ -50,5 +53,9 @@ public class MainFrame extends JFrame {
     }
     public PanelHandler getPanelHandler() {
         return panelHandler;
+    }
+
+    public MainModel getMainModel() {
+        return mainModel;
     }
 }

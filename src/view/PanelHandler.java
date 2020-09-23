@@ -23,33 +23,42 @@ public class PanelHandler {
     private JLabel nameLabel;
 
     private MainController mainController;
-    public PanelHandler(MainController mainController) {
+    public PanelHandler(MainModel mainModel, MainController mainController) {
         this.mainController=mainController;
         edit=new EditEmployeeGUI(this);
         newEmp=new NewEmployeeGUI(this);
         createButtons();
-        mainController.updateGUI(null,null,null,null,null);
+        updateGUI(null,null,null,null,null);
     }
     public void createButtons(){
         editEmployeeButton.setText("Edit");
         newEmployeeButton.setText("Create New Employee");
-        /*newEmployeeButton.addActionListener(new ActionListener() {
+        newEmployeeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                //TODO aufrufen des NewEmployeeGUIs
+                /*
+                mainFrame.getMainModel().getFrames().add(new MainFrame(mainFrame.getMainModel(), mainController,"NewEmployee",1200,50,500,500));
+                mainFrame.getMainModel().getFrames().get(1).switchToPanel(newEmp.getPanel());
+                */
                 editEmployeeButton.setEnabled(false);
                 mainFrame=new MainFrame(mainController,"NewEmployee",1200,50,500,500);
                 mainFrame.switchToPanel(newEmp.getPanel());
+                //mainFrame.switchToPanel(newEmp.getPanel());
             }
         });
         editEmployeeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                //TODO aufrufen des EditEmployeeGUIs
                 newEmployeeButton.setEnabled(false);
                 mainFrame = new MainFrame(mainController,"EditEmployee",1200,50,500,500);
                 mainFrame.switchToPanel(edit.getPanel());
+
             }
-        });*/
-        mainController.createButtons();
+        });
+
+        //mainController.handlePanelHandler();
     }
     public void updateGUI(String name, String age, String salary, String employment, String work){
         nameLabel.setText("Name: "+name);
@@ -92,14 +101,12 @@ public class PanelHandler {
         newEmp=new NewEmployeeGUI(this);
         mainFrame.getContentPane().removeAll();
     }
+
     public EditEmployeeGUI getEdit() {
         return edit;
     }
+
     public NewEmployeeGUI getNewEmp() {
         return newEmp;
-    }
-
-    public MainController getMainController() {
-        return mainController;
     }
 }

@@ -7,12 +7,8 @@ public class Employee {
     private double employmentTime;
     private String currentWork;
 
-    public Employee(String name, int age, double salary, double employmentTime, String currentWork){
-        this.name=name;
-        this.age=age;
-        this.salary=salary;
-        this.employmentTime=employmentTime;
-        this.currentWork=currentWork;
+    public Employee(){
+
     }
     public String getName() {
         return name;
@@ -44,5 +40,4 @@ public class Employee {
     public void setCurrentWork(String currentWork) {
         this.currentWork = currentWork;
     }
-
 }

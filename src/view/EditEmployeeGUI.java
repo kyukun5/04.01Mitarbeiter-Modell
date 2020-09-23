@@ -22,11 +22,8 @@ public class EditEmployeeGUI{
             public void actionPerformed(ActionEvent actionEvent) {
                 panelHandler.getNewEmployeeButton().setEnabled(true);
                 panelHandler.updateGUI(editName.getText(),editAge.getText(),editSalary.getText(),editEmployment.getText(),editWork.getText());
+                //TODO closeEdit
                 panelHandler.resetEdit();
-                //TODO rename Employee-Frame-Title
-                //panelHandler.getMainController().getModel().getFrames().get(panelHandler.getMainController().getModel().getFrames().indexOf(mainFrame)).setTitle
-                        //("Employee "+((panelHandler.getMainController().getModel().getFrames().indexOf(mainFrame)))+": "+
-                                //panelHandler.getMainController().getModel().getFrames().get(panelHandler.getMainController().getModel().getFrames().indexOf(mainFrame)).getPanelHandler().getNameLabel().getText().split("Name:")[1]);
             }
         });
     }
@@ -34,6 +31,7 @@ public class EditEmployeeGUI{
     public JPanel getPanel() {
         return panel;
     }
+
     public JButton getSubmitEditButton() {
         return submitEditButton;
     }

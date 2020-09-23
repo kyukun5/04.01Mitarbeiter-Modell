@@ -19,7 +19,7 @@ public class NewEmployeeGUI {
     private JTextField newSalary;
     private JTextField newEmployment;
     private JTextField newName;
-    private MainModel mainModel;
+    //private MainModel mainModel;
 
     public NewEmployeeGUI(PanelHandler panelHandler) {
         this.panelHandler=panelHandler;
@@ -27,22 +27,15 @@ public class NewEmployeeGUI {
         submitNewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                panelHandler.getNameLabel().setText("Name: "+newName.getText());
+                panelHandler.getAgeLabel().setText("Age: "+newAge.getText());
+                panelHandler.getWorkLabel().setText("Work: "+newWork.getText());
+                panelHandler.getSalaryLabel().setText("Salary: "+newSalary.getText());
+                panelHandler.getEmploymentLabel().setText("Employment: "+newEmployment.getText());
+                //TODO closeNewEmployee - create a new tab with the new Employee
                 mainFrame=new MainFrame(mainController,"Employee02",200,50,500,500);
-
-                mainFrame.switchToPanel(mainFrame.getPanelHandler().getPanel());
-                mainFrame.getPanelHandler().getNameLabel().setText("Name: "+newName.getText());
-                mainFrame.getPanelHandler().getAgeLabel().setText("Age: "+newAge.getText());
-                mainFrame.getPanelHandler().getWorkLabel().setText("Work: "+newWork.getText());
-                mainFrame.getPanelHandler().getSalaryLabel().setText("Salary: "+newSalary.getText());
-                mainFrame.getPanelHandler().getEmploymentLabel().setText("Employment: "+newEmployment.getText());
-                mainFrame.switchToPanel(mainFrame.getPanelHandler().getPanel());
+                panelHandler.resetNew();
                 panelHandler.getEditEmployeeButton().setEnabled(true);
-
-
-                panelHandler.getMainController().getModel().getFrames().add(mainFrame);
-                panelHandler.getMainController().getModel().getFrames().get(panelHandler.getMainController().getModel().getFrames().indexOf(mainFrame)).setTitle
-                        ("Employee "+((panelHandler.getMainController().getModel().getFrames().indexOf(mainFrame)))+": "+
-                                panelHandler.getMainController().getModel().getFrames().get(panelHandler.getMainController().getModel().getFrames().indexOf(mainFrame)).getPanelHandler().getNameLabel().getText().split("Name:")[1]);
             }
         });
     }
